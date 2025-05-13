@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "tailwind": "@tailwindcss -i ./crud/static/css/input.css -o ./crud/static/css/output.css --watch"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.6",
+    "css": "^3.0.0",
+    "lodash": "^4.17.21",
+    "tailwind": "^2.3.1"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.1.6"
+  }
+}

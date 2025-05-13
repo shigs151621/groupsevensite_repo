@@ -65,6 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'crud.views.get_user_data',
             ],
         },
     },
@@ -81,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'HOST': '127.0.0.1',
         'NAME': 'groupsevensite_db',
-        'PORT': '3308',
+        'PORT': '3306',
         'USER': 'root',
         'PASSWORD': '',
     }

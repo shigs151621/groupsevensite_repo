@@ -80,14 +80,26 @@ def delete_gender(request, genderId):
     
 def user_list(request):
     try:
+        search_query = request.GET.get('search', '')
         user_list = Users.objects.select_related('gender').all()
-        paginator = Paginator(user_list,10)
+        
+        if search_query:
+            user_list = user_list.filter(
+                full_name__icontains=search_query
+            ) | user_list.filter(
+                username__icontains=search_query
+            ) | user_list.filter(
+                email__icontains=search_query
+            )
+        
+        paginator = Paginator(user_list, 10)
         page_number = request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
         
         data = {
             'users': page_obj,
-            'page_obj': page_obj
+            'page_obj': page_obj,
+            'search_query': search_query
         }
         
         return render(request, 'user/UserList.html', data)
@@ -109,7 +121,36 @@ def add_user(request):
             
             if password != confirmPassword:
                 messages.error(request, 'Password and Confirm Password do not match!')
-                return redirect('/user/add')
+                data = {
+                    'genders': Genders.objects.all(),
+                    'form_data': {
+                        'full_name': fullname,
+                        'gender': gender,
+                        'birth_date': birthDate,
+                        'address': address,
+                        'contact_number': contactNumber,
+                        'email': email,
+                        'username': username
+                    }
+                }
+                return render(request, 'user/AddUser.html', data)
+            
+            # Check if username already exists
+            if Users.objects.filter(username=username).exists():
+                messages.error(request, 'Username already exists. Please choose a different username.')
+                data = {
+                    'genders': Genders.objects.all(),
+                    'form_data': {
+                        'full_name': fullname,
+                        'gender': gender,
+                        'birth_date': birthDate,
+                        'address': address,
+                        'contact_number': contactNumber,
+                        'email': email,
+                        'username': username
+                    }
+                }
+                return render(request, 'user/AddUser.html', data)
             
             Users.objects.create(
                 full_name=fullname,
@@ -133,7 +174,8 @@ def add_user(request):
             
             return render(request, 'user/AddUser.html', data)
     except Exception as e:
-        return HttpResponse(f'Error: {e}')
+        messages.error(request, f'An error occurred: {str(e)}')
+        return redirect('/user/add')
 
 def edit_user(request, userId):
     try:
@@ -152,6 +194,10 @@ def edit_user(request, userId):
             
             if not gender:
                 messages.error(request, 'Please select a gender')
+                return redirect(f'/user/edit/{userId}')
+
+            if Users.objects.filter(username=username).exclude(user_id=userId).exists():
+                messages.error(request, 'Username already exists. Please choose a different username.')
                 return redirect(f'/user/edit/{userId}')
             
             if password and confirmPassword:
@@ -188,7 +234,8 @@ def edit_user(request, userId):
             
             return render(request, 'user/EditUser.html', data)
     except Exception as e:
-        return HttpResponse(f'Error: {e}')
+        messages.error(request, f'An error occurred: {str(e)}')
+        return redirect('/user/list')
     
 def delete_user(request, userId):
     try:

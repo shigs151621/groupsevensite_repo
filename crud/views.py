@@ -282,15 +282,15 @@ def change_pass(request, userId):
             
             if not check_password(current_password, user.password):
                 messages.error(request, 'Current password is incorect')
-                return redirect(f'user/changepass/{userId}')
+                return redirect(f'/user/changepass/{userId}')
             
             if not password or not confirm_password:
                 messages.error(request, 'Fill out both fields')
-                return redirect(f'user/changepass/{userId}')
+                return redirect(f'/user/changepass/{userId}')
             
             if password != confirm_password:
-                messages.error(f'New password and confirm password do not match!')
-                return redirect(f'user/changepass/{userId}')
+                messages.error(request, f'New password and confirm password do not match!')
+                return redirect(f'/user/changepass/{userId}')
             
             user.password = make_password(password)
             user.save()

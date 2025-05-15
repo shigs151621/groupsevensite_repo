@@ -4,10 +4,16 @@ from django.contrib import messages
 from .models import Genders, Users
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required
 
+def custom_login_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if not request.session.get('is_authenticated'):
+            messages.error(request, 'Please log in to access this page.')
+            return redirect('/login/')
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
-@login_required
+@custom_login_required
 def gender_list(request):
     try: 
         genders = Genders.objects.all()
@@ -20,7 +26,7 @@ def gender_list(request):
     except Exception as e:
         return HttpResponse(f'Error: {e}')
 
-@login_required
+@custom_login_required
 def add_gender(request):
     try:
         if request.method == 'POST':
@@ -34,7 +40,7 @@ def add_gender(request):
     except Exception as e:
         return HttpResponse(f'Error: {e}')
 
-@login_required
+@custom_login_required
 def edit_gender(request, genderId):
     try:
         if request.method == 'POST':
@@ -63,7 +69,8 @@ def edit_gender(request, genderId):
             
     except Exception as e:
         return HttpResponse(f'Error: {e}')
-    
+
+@custom_login_required    
 def delete_gender(request, genderId):
     try:
         if request.method == 'POST':
@@ -82,7 +89,8 @@ def delete_gender(request, genderId):
             return render(request, 'gender/DeleteGender.html', data)
     except Exception as e:
         return HttpResponse(f'Error: {e}')
-    
+
+@custom_login_required    
 def user_list(request):
     try:
         search_query = request.GET.get('search', '')
@@ -111,7 +119,7 @@ def user_list(request):
     except Exception as e:
         return HttpResponse(f'Error: {e}')
 
-@login_required
+@custom_login_required
 def add_user(request):
     try:
         if request.method == 'POST':
@@ -183,7 +191,7 @@ def add_user(request):
         messages.error(request, f'An error occurred: {str(e)}')
         return redirect('/user/add')
     
-@login_required
+@custom_login_required
 def edit_user(request, userId):
     try:
         if request.method == 'POST':
@@ -243,7 +251,8 @@ def edit_user(request, userId):
     except Exception as e:
         messages.error(request, f'An error occurred: {str(e)}')
         return redirect('/user/list')
-    
+
+@custom_login_required    
 def delete_user(request, userId):
     try:
         if request.method == 'GET':
@@ -279,10 +288,10 @@ def login(request):
                 if check_password(password, user.password):
                     request.session['userId'] = user.user_id
                     request.session['username'] = user.username
-                    
+                    request.session['is_authenticated'] = True
                     
                     messages.success(request, f'Welcome {user.full_name}!')
-                    return redirect('/user/list')
+                    return redirect('/gender/list')
                 else:
                     messages.error(request, 'Invalid username or password.')
                     return render(request, 'user/login.html')

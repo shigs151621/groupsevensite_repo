@@ -215,12 +215,6 @@ def edit_user(request, userId):
                 messages.error(request, 'Username already exists. Please choose a different username.')
                 return redirect(f'/user/edit/{userId}')
             
-            if password and confirmPassword:
-                if password != confirmPassword:
-                    messages.error(request, 'Password and Confirm Password do not match!')
-                    return redirect(f'/user/edit/{userId}')
-                userObj.password = make_password(password)
-            
             try:
                 genderObj = Genders.objects.get(pk=gender)
                 userObj.gender = genderObj
@@ -274,6 +268,44 @@ def delete_user(request, userId):
     except Users.DoesNotExist:
         messages.error(request, 'User not found.')
         return redirect('/user/list')
+    except Exception as e:
+        return HttpResponse(f'Error: {e}')
+    
+@custom_login_required
+def change_pass(request, userId):
+    try:
+        if request.method == 'POST':
+            user = Users.objects.get(pk=userId)
+            
+            data = {
+                'user':user
+            }
+            
+            return render(request,'user/ChangePass.html', data)
+        elif request.method == 'POST':
+            user = Users.objects.get(pk=userId)
+            current_password = request.POST.get('current_password')
+            password = request.POST.get('password')
+            confirm_password = request.POST.get('confirm_password')
+            
+            if not check_password(current_password, user.password):
+                messages.error(request, 'Current password is incorect')
+                return redirect(f'user/changepass/{userId}')
+            
+            if not password or not confirm_password:
+                messages.error(request, 'Fill out both fields')
+                return redirect(f'user/changepass/{userId}')
+            
+            if password != confirm_password:
+                messages.error(f'New password and confirm password do not match!')
+                return redirect(f'user/changepass/{userId}')
+            
+            user.password = make_password(password)
+            user.save()
+            messages.success(request, 'Password changed successfully!')
+            return redirect('/user/list')
+        else:
+            return redirect(request, 'user/ChangePass.html')
     except Exception as e:
         return HttpResponse(f'Error: {e}')
 

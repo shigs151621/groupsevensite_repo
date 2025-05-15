@@ -1,0 +1,31 @@
+{% extends 'layout/base.html' %}
+
+{% block 'title' %} Change Password {% endblock 'title' %}
+
+{% block 'content' %}
+{% include 'include/Sidebar.html' %}
+{% include 'include/ToastMessage.html' %}
+
+<div class="p-2">
+    <form action="/user/changepass/{{ user.user_Id}}" method="post">
+        {% csrf_token %}
+        <div>
+            <input type="password" name="current_password" id="current_password" required />
+            <label for="current_password">Enter your current password</label>
+        </div>
+        <div>
+            <input type="password" name="password" id="password" required />
+            <label for="password" >Enter your new password</label>
+        </div>
+        <div>
+            <input type="password" name="confirm_password" id="confirm_password" required />
+            <label for="confirm_password" >Confirm your new password</label>
+        </div>
+        <div>
+            <a href="/user/list" >Back</a>
+            <button type="submit" >Change Password</button>
+        </div>
+    </form>
+</div>
+
+{% endblock 'content' %}

@@ -8,17 +8,17 @@
 
 <div class="p-2 sm:ml-64 mt-16 md:mt-14">
     <div class="mb-4">
-    <form action="/gender/list" class="flex gap-2" mathod="GET">
-      <input type="text" name="search" value="{{ search_query }}" placeholder="Search sang wanted" class="bg-white px-3 py-2 border border-gray-300 text-black text-sm rounded-sm w-full focus:outline-none focus:ring-blue-600 focus:border-blue-600">
-      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-sm text-sm">Search</button>  
-      {% if search_query %}
-        <a href="/gender/list" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-sm text-sm">Clear</a>
-      {% endif %}
-        
-    </form>
+    <form action="/gender/list" class="flex gap-2" method="GET">
+  <input type="text" name="search" value="{{ search_query }}" placeholder="Search" class="bg-white px-3 py-2 border border-gray-300 text-black text-sm rounded-sm w-full focus:outline-none focus:ring-gray-600 focus:border-gray-600">
+  <button type="submit" class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-sm text-sm">Search</button>  
+  {% if search_query %}
+    <a href="/gender/list" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-sm text-sm ml-1">Clear</a>
+  {% endif %}
+  </form>
+
     <div class="relative overflow-x-auto rounded-sm shadow-sm">
         <table class="w-full">
-            <thead class="text-xs text-left text-white bg-blue-600">
+            <thead class="text-xs text-left text-white bg-gray-600">
                 <tr>
                     <th class="px-6 py-3">Gender</th>
                     <th class="px-6 py-3">Action</th>
@@ -30,8 +30,8 @@
                         <td class="px-6 py-3">{{ gender.gender }}</td>
                         <td class="px-6 py-3">
                             <div class="inline-flex shadow-sm"> 
-                                <a href="/gender/edit/{{ gender.gender_id }}" class="bg-green-500 px-3 py-2.5 font-medium text-white hover:bg-green-600 hover:outline-none rounded-s-sm">Edit</a>
-                                <a href="/gender/delete/{{ gender.gender_id }}" class="bg-red-500 px-3 py-2.5 font-medium text-white hover:bg-red-600 hover:outline-none rounded-e-sm">Delete</a>
+                                <a href="/gender/edit/{{ gender.gender_id }}" class="bg-blue-950 px-3 py-2.5 font-medium text-white hover:bg-blue-700 hover:outline-none rounded-s-sm">Edit</a>
+                                <a href="/gender/delete/{{ gender.gender_id }}" class="bg-red-700 px-3 py-2.5 font-medium text-white hover:bg-red-500 hover:outline-none rounded-e-sm">Delete</a>
                             </div>
                         </td>
                     </tr>

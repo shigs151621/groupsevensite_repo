@@ -4,7 +4,10 @@ from django.contrib import messages
 from .models import Genders, Users
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 
+
+@login_required
 def gender_list(request):
     try: 
         genders = Genders.objects.all()
@@ -16,7 +19,8 @@ def gender_list(request):
         return render(request, 'gender/GenderList.html', data)
     except Exception as e:
         return HttpResponse(f'Error: {e}')
-    
+
+@login_required
 def add_gender(request):
     try:
         if request.method == 'POST':
@@ -29,7 +33,8 @@ def add_gender(request):
             return render(request, 'gender/AddGender.html')
     except Exception as e:
         return HttpResponse(f'Error: {e}')
-    
+
+@login_required
 def edit_gender(request, genderId):
     try:
         if request.method == 'POST':
@@ -105,7 +110,8 @@ def user_list(request):
         return render(request, 'user/UserList.html', data)
     except Exception as e:
         return HttpResponse(f'Error: {e}')
-    
+
+@login_required
 def add_user(request):
     try:
         if request.method == 'POST':
@@ -176,7 +182,8 @@ def add_user(request):
     except Exception as e:
         messages.error(request, f'An error occurred: {str(e)}')
         return redirect('/user/add')
-
+    
+@login_required
 def edit_user(request, userId):
     try:
         if request.method == 'POST':
@@ -272,6 +279,7 @@ def login(request):
                 if check_password(password, user.password):
                     request.session['userId'] = user.user_id
                     request.session['username'] = user.username
+                    
                     
                     messages.success(request, f'Welcome {user.full_name}!')
                     return redirect('/user/list')

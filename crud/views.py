@@ -276,14 +276,6 @@ def change_pass(request, userId):
     try:
         if request.method == 'POST':
             user = Users.objects.get(pk=userId)
-            
-            data = {
-                'user':user
-            }
-            
-            return render(request,'user/ChangePass.html', data)
-        elif request.method == 'POST':
-            user = Users.objects.get(pk=userId)
             current_password = request.POST.get('current_password')
             password = request.POST.get('password')
             confirm_password = request.POST.get('confirm_password')
@@ -305,7 +297,8 @@ def change_pass(request, userId):
             messages.success(request, 'Password changed successfully!')
             return redirect('/user/list')
         else:
-            return redirect(request, 'user/ChangePass.html')
+            user = Users.objects.get(pk=userId)
+            return render(request, 'user/ChangePass.html', {'user':user})
     except Exception as e:
         return HttpResponse(f'Error: {e}')
 
